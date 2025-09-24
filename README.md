@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -13,24 +13,18 @@
       text-align: center;
       color: #333;
     }
-    .precos {
+    .precos, .formulario {
       background: white;
       padding: 15px;
       border-radius: 10px;
       box-shadow: 0 0 5px rgba(0,0,0,0.2);
       margin-bottom: 20px;
     }
-    .precos h2 {
-      margin-top: 0;
-      color: #444;
-    }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 20px;
       background: white;
-      border-radius: 10px;
-      overflow: hidden;
     }
     th, td {
       padding: 10px;
@@ -39,18 +33,6 @@
     }
     th {
       background: #eee;
-    }
-    .total {
-      font-weight: bold;
-      margin-top: 10px;
-      font-size: 18px;
-    }
-    .formulario {
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.2);
-      margin-bottom: 20px;
     }
     input, select, button {
       padding: 8px;
@@ -65,6 +47,11 @@
     }
     button:hover {
       background: #555;
+    }
+    .total {
+      font-weight: bold;
+      margin-top: 10px;
+      font-size: 18px;
     }
   </style>
 </head>
@@ -84,7 +71,7 @@
     </table>
   </div>
 
-  <!-- Registrar corte -->
+  <!-- Registrar corte avulso -->
   <div class="formulario">
     <h2>Registrar Corte</h2>
     <label for="tipoCorte">Tipo de serviço:</label>
@@ -108,13 +95,15 @@
     <p class="total">Total em cortes: R$ <span id="totalCortes">0</span></p>
   </div>
 
-  <!-- Planos mensais -->
+  <!-- Clientes com plano -->
   <div class="formulario">
     <h2>Clientes com Plano Mensal</h2>
     <label for="nomeCliente">Nome:</label>
     <input type="text" id="nomeCliente" placeholder="Nome do cliente">
     <label for="planoCliente">Plano:</label>
     <input type="text" id="planoCliente" placeholder="Ex: Corte semanal">
+    <label for="valorPlanoCliente">Valor do plano (R$):</label>
+    <input type="number" id="valorPlanoCliente" placeholder="Ex: 100">
     <button onclick="adicionarCliente()">Adicionar Cliente</button>
 
     <h3>Lista de Clientes</h3>
@@ -122,13 +111,17 @@
       <tr>
         <th>Nome</th>
         <th>Plano</th>
+        <th>Valor (R$)</th>
         <th>Data de Entrada</th>
       </tr>
     </table>
+    <p class="total">Total de planos cadastrados: R$ <span id="totalPlanos">0</span></p>
   </div>
 
   <script>
     let totalCortes = 0;
+    let totalPlanos = 0;
+    let clientes = [];
 
     function registrarCorte() {
       const select = document.getElementById('tipoCorte');
@@ -143,26 +136,39 @@
       novaLinha.insertCell(2).innerText = data;
 
       totalCortes += valor;
-      document.getElementById('totalCortes').innerText = totalCortes;
+      atualizarResumo();
     }
 
     function adicionarCliente() {
       const nome = document.getElementById('nomeCliente').value;
       const plano = document.getElementById('planoCliente').value;
+      const valor = parseFloat(document.getElementById('valorPlanoCliente').value);
       const data = new Date().toLocaleDateString();
 
-      if (nome && plano) {
+      if (nome && plano && valor > 0) {
+        clientes.push({nome, plano, valor, data});
         const tabela = document.getElementById('tabelaClientes');
         const novaLinha = tabela.insertRow();
         novaLinha.insertCell(0).innerText = nome;
         novaLinha.insertCell(1).innerText = plano;
-        novaLinha.insertCell(2).innerText = data;
+        novaLinha.insertCell(2).innerText = valor.toFixed(2).replace(".", ",");
+        novaLinha.insertCell(3).innerText = data;
 
         document.getElementById('nomeCliente').value = "";
         document.getElementById('planoCliente').value = "";
+        document.getElementById('valorPlanoCliente').value = "";
+
+        atualizarResumo();
       } else {
-        alert("Preencha o nome e o plano do cliente.");
+        alert("Preencha todos os campos corretamente.");
       }
+    }
+
+    function atualizarResumo() {
+      const totalPlanosCalc = clientes.reduce((soma, c) => soma + c.valor, 0);
+      totalPlanos = totalPlanosCalc;
+      document.getElementById('totalCortes').innerText = totalCortes;
+      document.getElementById('totalPlanos').innerText = totalPlanos.toFixed(2).replace(".", ",");
     }
   </script>
 </body>
