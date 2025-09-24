@@ -2,173 +2,170 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>💈 Controle de Cortes - Barbearia</title>
+  <title>💈 Controle de Cortes</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #fafafa; }
-    h1 { text-align: center; margin-bottom: 30px; }
-    h2 { margin-top: 20px; }
-    input, button { margin: 5px 0; padding: 6px; border-radius: 4px; border: 1px solid #ccc; }
-    button { cursor: pointer; background: #000; color: #fff; }
-    button:hover { background: #444; }
-    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    th { background: #f0f0f0; }
-    .box { border: 1px solid #000; padding: 15px; margin-bottom: 20px; border-radius: 8px; background: #fff; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .precos {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
+    }
+    .precos h2 {
+      margin-top: 0;
+      color: #444;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    th {
+      background: #eee;
+    }
+    .total {
+      font-weight: bold;
+      margin-top: 10px;
+      font-size: 18px;
+    }
+    .formulario {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
+    }
+    input, select, button {
+      padding: 8px;
+      margin: 5px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #333;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #555;
+    }
   </style>
 </head>
 <body>
-
   <h1>💈 Controle de Cortes</h1>
 
-  <!-- Cortes avulsos -->
-  <div class="box">
-    <h2>Cortes Avulsos</h2>
-    <label>Valor do corte avulso (R$):</label>
-    <input type="number" id="valorAvulso" value="30">
-    <br>
-    <button onclick="registrarCorteAvulso()">Registrar Corte Avulso</button>
-    <p>Total de cortes avulsos: <span id="totalAvulso">0</span></p>
+  <!-- Tabela de preços -->
+  <div class="precos">
+    <h2>Tabela de Preços</h2>
+    <table>
+      <tr><th>Serviço</th><th>Preço (R$)</th></tr>
+      <tr><td>Corte</td><td>25</td></tr>
+      <tr><td>Barba</td><td>15</td></tr>
+      <tr><td>Sobrancelha</td><td>10</td></tr>
+      <tr><td>Corte + Barba</td><td>40</td></tr>
+      <tr><td>Corte + Barba + Sobrancelha</td><td>50</td></tr>
+    </table>
   </div>
 
-  <!-- Clientes de plano -->
-  <div class="box">
+  <!-- Registrar corte -->
+  <div class="formulario">
+    <h2>Registrar Corte</h2>
+    <label for="tipoCorte">Tipo de serviço:</label>
+    <select id="tipoCorte">
+      <option value="25">Corte - R$25</option>
+      <option value="15">Barba - R$15</option>
+      <option value="10">Sobrancelha - R$10</option>
+      <option value="40">Corte + Barba - R$40</option>
+      <option value="50">Corte + Barba + Sobrancelha - R$50</option>
+    </select>
+    <button onclick="registrarCorte()">Adicionar Corte</button>
+
+    <h3>Histórico de cortes</h3>
+    <table id="tabelaCortes">
+      <tr>
+        <th>Serviço</th>
+        <th>Valor (R$)</th>
+        <th>Data</th>
+      </tr>
+    </table>
+    <p class="total">Total em cortes: R$ <span id="totalCortes">0</span></p>
+  </div>
+
+  <!-- Planos mensais -->
+  <div class="formulario">
     <h2>Clientes com Plano Mensal</h2>
+    <label for="nomeCliente">Nome:</label>
     <input type="text" id="nomeCliente" placeholder="Nome do cliente">
-    <input type="number" id="qtdPlano" placeholder="Qtd cortes no plano">
-    <input type="number" id="valorPlano" placeholder="Valor do plano (R$)">
+    <label for="planoCliente">Plano:</label>
+    <input type="text" id="planoCliente" placeholder="Ex: Corte semanal">
     <button onclick="adicionarCliente()">Adicionar Cliente</button>
 
     <h3>Lista de Clientes</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Nome</th>
-          <th>Plano (cortes)</th>
-          <th>Valor (R$)</th>
-          <th>Usados</th>
-          <th>Restantes</th>
-          <th>Ação</th>
-        </tr>
-      </thead>
-      <tbody id="tabelaClientes"></tbody>
+    <table id="tabelaClientes">
+      <tr>
+        <th>Nome</th>
+        <th>Plano</th>
+        <th>Data de Entrada</th>
+      </tr>
     </table>
-  </div>
-
-  <!-- Histórico -->
-  <div class="box">
-    <h2>Histórico de Cortes</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Data/Hora</th>
-          <th>Cliente</th>
-          <th>Tipo</th>
-        </tr>
-      </thead>
-      <tbody id="tabelaHistorico"></tbody>
-    </table>
-  </div>
-
-  <!-- Resumo -->
-  <div class="box">
-    <h2>Resumo</h2>
-    <p>Total cortes avulsos: <span id="resumoAvulso">0</span></p>
-    <p>Total cortes de planos: <span id="resumoPlano">0</span></p>
-    <p><b>Total geral de cortes: <span id="resumoGeral">0</span></b></p>
-    <p><b>Valor total arrecadado: R$ <span id="resumoValor">0,00</span></b></p>
   </div>
 
   <script>
-    let totalAvulso = 0;
-    let totalPlano = 0;
-    let clientes = [];
-    let historico = [];
-    let valorTotal = 0;
+    let totalCortes = 0;
 
-    function atualizarResumo() {
-      document.getElementById("resumoAvulso").innerText = totalAvulso;
-      document.getElementById("resumoPlano").innerText = totalPlano;
-      document.getElementById("resumoGeral").innerText = totalAvulso + totalPlano;
+    function registrarCorte() {
+      const select = document.getElementById('tipoCorte');
+      const valor = parseInt(select.value);
+      const texto = select.options[select.selectedIndex].text;
+      const data = new Date().toLocaleString();
 
-      // valor dos planos cadastrados
-      let valorPlanos = clientes.reduce((soma, c) => soma + c.valor, 0);
-      // valor dos cortes avulsos realizados
-      let valorAvulsos = totalAvulso * parseFloat(document.getElementById("valorAvulso").value);
+      const tabela = document.getElementById('tabelaCortes');
+      const novaLinha = tabela.insertRow();
+      novaLinha.insertCell(0).innerText = texto;
+      novaLinha.insertCell(1).innerText = valor;
+      novaLinha.insertCell(2).innerText = data;
 
-      valorTotal = valorPlanos + valorAvulsos;
-      document.getElementById("resumoValor").innerText = valorTotal.toFixed(2).replace(".", ",");
-    }
-
-    function registrarCorteAvulso() {
-      totalAvulso++;
-      let data = new Date().toLocaleString();
-      historico.push({data, cliente: "Avulso", tipo: "Avulso"});
-      atualizarHistorico();
-      document.getElementById("totalAvulso").innerText = totalAvulso;
-      atualizarResumo();
+      totalCortes += valor;
+      document.getElementById('totalCortes').innerText = totalCortes;
     }
 
     function adicionarCliente() {
-      let nome = document.getElementById("nomeCliente").value;
-      let qtdPlano = parseInt(document.getElementById("qtdPlano").value);
-      let valorPlano = parseFloat(document.getElementById("valorPlano").value);
+      const nome = document.getElementById('nomeCliente').value;
+      const plano = document.getElementById('planoCliente').value;
+      const data = new Date().toLocaleDateString();
 
-      if (nome && qtdPlano > 0 && valorPlano > 0) {
-        clientes.push({nome, plano: qtdPlano, usados: 0, valor: valorPlano});
-        atualizarTabelaClientes();
-        atualizarResumo();
-        document.getElementById("nomeCliente").value = "";
-        document.getElementById("qtdPlano").value = "";
-        document.getElementById("valorPlano").value = "";
+      if (nome && plano) {
+        const tabela = document.getElementById('tabelaClientes');
+        const novaLinha = tabela.insertRow();
+        novaLinha.insertCell(0).innerText = nome;
+        novaLinha.insertCell(1).innerText = plano;
+        novaLinha.insertCell(2).innerText = data;
+
+        document.getElementById('nomeCliente').value = "";
+        document.getElementById('planoCliente').value = "";
       } else {
-        alert("Preencha corretamente os dados do cliente.");
+        alert("Preencha o nome e o plano do cliente.");
       }
-    }
-
-    function registrarCortePlano(index) {
-      let cliente = clientes[index];
-      if (cliente.usados < cliente.plano) {
-        cliente.usados++;
-        totalPlano++;
-        let data = new Date().toLocaleString();
-        historico.push({data, cliente: cliente.nome, tipo: "Plano"});
-        atualizarTabelaClientes();
-        atualizarHistorico();
-        atualizarResumo();
-      } else {
-        alert("Este cliente já usou todos os cortes do plano.");
-      }
-    }
-
-    function atualizarTabelaClientes() {
-      let tabela = document.getElementById("tabelaClientes");
-      tabela.innerHTML = "";
-      clientes.forEach((c, i) => {
-        let row = `<tr>
-          <td>${c.nome}</td>
-          <td>${c.plano}</td>
-          <td>R$ ${c.valor.toFixed(2).replace(".", ",")}</td>
-          <td>${c.usados}</td>
-          <td>${c.plano - c.usados}</td>
-          <td><button onclick="registrarCortePlano(${i})">Registrar Corte</button></td>
-        </tr>`;
-        tabela.innerHTML += row;
-      });
-    }
-
-    function atualizarHistorico() {
-      let tabela = document.getElementById("tabelaHistorico");
-      tabela.innerHTML = "";
-      historico.slice().reverse().forEach(h => {
-        let row = `<tr>
-          <td>${h.data}</td>
-          <td>${h.cliente}</td>
-          <td>${h.tipo}</td>
-        </tr>`;
-        tabela.innerHTML += row;
-      });
     }
   </script>
 </body>
 </html>
+
 
